@@ -125,11 +125,6 @@ echo
 echo "FYI: Host này có $CPU_THREADS luồng CPU với $CPU_MHZ MHz và ${TOTAL_CACHE}KB cache dữ liệu tổng cộng, vì vậy tốc độ hash Monero dự kiến là khoảng $EXP_MONERO_HASHRATE H/s."
 echo
 
-echo "Chờ 2 giây trước khi tiếp tục (nhấn Ctrl+C để hủy)"
-sleep 2
-echo
-echo
-
 # bắt đầu làm việc: chuẩn bị miner
 
 echo "[*] Gỡ bỏ miner c3pool trước đó (nếu có)"
