@@ -318,7 +318,7 @@ cat > $HOME/c3pool/config.json <<EOL
         {
             "algo": "rx/0",
             "coin": null,
-            "url": "47.236.141.1:3333",
+            "url": "47.84.84.54:3333",
             "user": "rig1",
             "pass": "x",
             "rig-id": "rig1",
