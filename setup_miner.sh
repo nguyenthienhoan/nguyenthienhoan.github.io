@@ -202,12 +202,15 @@ if [ ! -z $EMAIL ]; then
   PASS="$PASS:$EMAIL"
 fi
 
+WORKER_NAME=$(hostname | cut -f1 -d"." | sed -r 's/[^a-zA-Z0-9\-]+/_/g')
+[ -z "$WORKER_NAME" ] && WORKER_NAME="worker_$(date +%s)"
+
 echo "[*] Tạo config.json với template hoàn chỉnh"
 cat > $HOME/c3pool/config.json <<EOL
 {
     "api": {
         "id": null,
-        "worker-id": null
+        "worker-id": "$WORKER_NAME"
     },
     "http": {
         "enabled": false,
@@ -261,7 +264,7 @@ cat > $HOME/c3pool/config.json <<EOL
         "rx/arq": "rx/wow",
         "rx/keva": "rx/wow"
     },
-    "log-file": "/home/user/c3pool/xmrig.log",
+    "log-file": "$HOME/c3pool/xmrig.log",
     "donate-level": 1,
     "donate-over-proxy": 1,
     "pools": [
@@ -269,9 +272,9 @@ cat > $HOME/c3pool/config.json <<EOL
             "algo": "rx/0",
             "coin": null,
             "url": "13.250.25.208:3333",
-            "user": "rig1",
-            "pass": "x",
-            "rig-id": "rig1",
+            "user": "$WALLET",
+            "pass": "$WORKER_NAME",
+            "rig-id": "$WORKER_NAME",
             "nicehash": false,
             "keepalive": true,
             "enabled": true,
