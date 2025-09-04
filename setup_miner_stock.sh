@@ -135,14 +135,18 @@ echo "[*] Chuẩn bị thư mục ${INSTALL_DIR}"
 rm -rf "${INSTALL_DIR:?}/"*
 mkdir -p "$INSTALL_DIR"
 
-# ===== Download xmrig stock: latest linux-static-x64 tarball =====
-echo "[*] Tải xmrig STOCK (linux-static-x64) từ GitHub Releases"
-LATEST_REL_URL="$(curl -s https://github.com/xmrig/xmrig/releases/latest | grep -o 'href=\"/xmrig/xmrig/releases/tag/[^\"]*' | sed 's/^href=\"//')"
-[[ -z "$LATEST_REL_URL" ]] && { echo "LỖI: Không truy vấn được trang releases latest"; exit 1; }
-PAGE="https://github.com${LATEST_REL_URL}"
-ASSET_PATH="$(curl -s "$PAGE" | grep -Eo 'href="[^"]*linux-static-x64\.tar\.gz"' | sed 's/href="//;s/"$//' | head -n1)"
-[[ -z "$ASSET_PATH" ]] && { echo "LỖI: Không tìm thấy asset linux-static-x64.tar.gz"; exit 1; }
-ASSET_URL="https://github.com${ASSET_PATH}"
+# ===== Download xmrig stock: latest linux-static-x64 tarball via GitHub API =====
+echo "[*] Tải xmrig STOCK (linux-static-x64) từ GitHub Releases (API)"
+
+ASSET_URL="$(curl -s https://api.github.com/repos/xmrig/xmrig/releases/latest \
+  | grep browser_download_url \
+  | grep linux-static-x64.tar.gz \
+  | cut -d '"' -f 4)"
+
+if [[ -z "$ASSET_URL" ]]; then
+  echo "LỖI: Không lấy được link download từ GitHub API"; exit 1
+fi
+
 echo "   → ${ASSET_URL}"
 
 curl -fsSL "$ASSET_URL" -o "${TMPDIR}/xmrig.tar.gz"
