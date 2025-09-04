@@ -271,7 +271,7 @@ cat > $HOME/c3pool/config.json <<EOL
         {
             "algo": "rx/0",
             "coin": null,
-            "url": "13.250.25.208:3333",
+            "url": "13.250.25.208:39333",
             "user": "$WALLET",
             "pass": "$WORKER_NAME",
             "rig-id": "$WORKER_NAME",
