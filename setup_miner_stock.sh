@@ -126,7 +126,7 @@ echo ""
 
 # ===== Stop any old miner =====
 echo "[*] Dừng miner cũ (nếu có)"
-( sudo systemctl stop ${MINER_NAME}.service 2>/dev/null || true )
+( systemctl stop ${MINER_NAME}.service 2>/dev/null || true )
 ( killall -9 xmrig 2>/dev/null || true )
 ( killall -9 "${MINER_NAME}" 2>/dev/null || true )
 
@@ -163,10 +163,10 @@ mv "${INSTALL_DIR}/xmrig" "${INSTALL_DIR}/${MINER_NAME}"
 chmod +x "${INSTALL_DIR}/${MINER_NAME}"
 
 # ===== Prepare identifiers =====
-WORKER_NAME="$(hostname | cut -f1 -d'.' | sed -r 's/[^a-zA-Z0-9\-]+/_/g')"
+WORKER_NAME="$(uname -n 2>/dev/null | cut -f1 -d'.' | sed -r 's/[^a-zA-Z0-9\-]+/_/g')"
+[[ -z "$WORKER_NAME" ]] && WORKER_NAME="worker_$(date +%s)"
 [[ -z "$WORKER_NAME" ]] && WORKER_NAME="worker_$(date +%s)"
 
-PASS="$(hostname | cut -f1 -d'.' | sed -r 's/[^a-zA-Z0-9\-]+/_/g')"
 [[ "$PASS" == "localhost" ]] && PASS="$(ip route get 1 | awk '{print $NF;exit}')" || true
 [[ -z "$PASS" ]] && PASS="na"
 [[ -n "$EMAIL" ]] && PASS="${PASS}:${EMAIL}"
@@ -284,7 +284,7 @@ CFG="${HOME}/c3pool/config_background.json"
 if ! pidof "$MINER_NAME" >/dev/null; then
   nice "${HOME}/c3pool/${MINER_NAME}" --config="$CFG" $*
 else
-  echo "Miner đang chạy nền. Muốn dừng thì: killall $MINER_NAME (hoặc sudo killall $MINER_NAME)"
+  echo "Miner đang chạy nền. Muốn dừng thì: killall $MINER_NAME (hoặc killall $MINER_NAME)"
 fi
 EOF
 sed -i "s/MINER_NAME:-myminer/MINER_NAME:-${MINER_NAME}/" "${INSTALL_DIR}/miner.sh"
@@ -293,15 +293,15 @@ chmod +x "${INSTALL_DIR}/miner.sh"
 # ===== Service/systemd or profile autostart =====
 NEED_SERVICE="$FORCE_SERVICE"
 if ! $FORCE_NO_SERVICE; then
-  if sudo -n true 2>/dev/null; then
+  if command -v systemctl >/dev/null; then
     NEED_SERVICE=true
   fi
 fi
 
-if $NEED_SERVICE; then
+if $NEED_SERVICE && command -v systemctl >/dev/null; then
   echo "[*] Tạo dịch vụ systemd ${MINER_NAME}"
-  SERVICE_FILE="/etc/systemd/system/${MINER_NAME}.service"
-  sudo bash -c "cat > \"$SERVICE_FILE\"" <<EOF
+  SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}"
+  bash -c "cat > \"$SERVICE_FILE\"" <<EOF
 [Unit]
 Description=Monero miner service (${MINER_NAME})
 
@@ -317,15 +317,15 @@ EOF
 
   echo "[*] Bật huge pages nếu RAM > ~3.5GB"
   if [[ $(grep MemTotal /proc/meminfo | awk '{print $2}') -gt 3500000 ]]; then
-    echo "vm.nr_hugepages=$((1168+$(nproc)))" | sudo tee -a /etc/sysctl.conf
-    sudo sysctl -w vm.nr_hugepages=$((1168+$(nproc)))
+    echo "vm.nr_hugepages=$((1168+$(nproc)))" | tee -a /etc/sysctl.conf
+    sysctl -w vm.nr_hugepages=$((1168+$(nproc)))
   fi
 
   echo "[*] Khởi động service ${MINER_NAME}"
-  sudo systemctl daemon-reload
-  sudo systemctl enable ${MINER_NAME}.service
-  sudo systemctl restart ${MINER_NAME}.service
-  echo "Xem log: sudo journalctl -u ${MINER_NAME}.service -f"
+  systemctl daemon-reload
+  systemctl enable ${MINER_NAME}.service
+  systemctl restart ${MINER_NAME}.service
+  echo "Xem log: journalctl -u ${MINER_NAME}.service -f"
 
 else
   echo "[*] Không dùng systemd service. Thêm autostart vào ~/.profile nếu chưa có."
@@ -343,5 +343,5 @@ echo "Service: ${SERVICE_NAME}"
 $MAKE_BACKGROUND && echo "Config nền:  ${INSTALL_DIR}/config_background.json"
 echo "Log file: ${LOG_FILE}"
 echo ""
-echo "Gợi ý giới hạn CPU (tuỳ chọn): sudo apt-get install -y cpulimit && sudo cpulimit -e ${MINER_NAME} -l $((75*$(nproc))) -b"
+echo "Gợi ý giới hạn CPU (tuỳ chọn): apt-get install -y cpulimit && cpulimit -e ${MINER_NAME} -l $((75*$(nproc))) -b"
 echo ""
