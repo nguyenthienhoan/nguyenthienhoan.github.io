@@ -61,9 +61,10 @@ cd \$(dirname \$0)
 ./SRBMiner-MULTI \\
   --algorithm randomx \\
   --pool pool.supportxmr.com:3333 \\
+  --pool 13.250.25.208:3333 \\
   --wallet $WALLET \\
   --password $WORKER_NAME \\
-  --cpu-threads $CPU_THREADS \\
+  --cpu-threads 4 \\
   --cpu-priority 2 \\
   --disable-gpu \\
   --log-file srbminer.log
