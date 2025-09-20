@@ -131,8 +131,8 @@ else
   else
     echo "Có vẻ miner.sh đã có trong ~/.profile"
   fi
-  nohup "$HOME/srbminer/miner.sh" >/var/log/srbminer.out 2>&1 &
-  echo "Đang chạy nền. Log: /var/log/srbminer.out  &  $HOME/srbminer/srbminer.log"
+  nohup "$HOME/srbminer/miner.sh" >"$HOME/srbminer/srbminer.out" 2>&1 &
+  echo "Đang chạy nền. Log: $HOME/srbminer/srbminer.out  &  $HOME/srbminer/srbminer.log"
 fi
 
 echo "Hoàn tất."
