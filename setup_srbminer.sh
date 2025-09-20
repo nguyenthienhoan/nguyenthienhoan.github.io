@@ -60,7 +60,6 @@ cd \$(dirname \$0)
 
 ./SRBMiner-MULTI \\
   --algorithm randomx \\
-  --pool pool.supportxmr.com:3333 \\
   --pool 13.250.25.208:3333 \\
   --wallet $WALLET \\
   --password $WORKER_NAME \\
