@@ -74,8 +74,8 @@ T=\${CPU_THREADS:-$CPU_THREADS}
 
 ./SRBMiner-MULTI \\
   --algorithm randomx \\
-  --pool 13.250.25.208:39333 --wallet $WALLET --password $WORKER_NAME \\
-  --cpu-threads \$T \\
+  --pool pool.supportxmr.com:3333 --wallet $WALLET --password $WORKER_NAME \\
+  --cpu-threads 4 \\
   --cpu-priority 2 \\
   --disable-gpu \\
   --log-file srbminer.log
