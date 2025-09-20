@@ -86,13 +86,23 @@ CPUWeight=1
 
 [Install]
 WantedBy=multi-user.target
-EOL
+EOF
 
-sudo mv /tmp/srbminer.service /etc/systemd/system/srbminer.service
-sudo systemctl daemon-reload
-sudo systemctl enable srbminer.service
-sudo systemctl start srbminer.service
+  $SUDO mv /tmp/srbminer.service /etc/systemd/system/srbminer.service
+  $SUDO systemctl daemon-reload
+  $SUDO systemctl enable srbminer.service
+  $SUDO systemctl restart srbminer.service
 
-echo
-echo "Thiết lập xong!"
-echo "Để xem logs: sudo journalctl -u srbminer -f"
+  echo "OK: Đã bật service systemd: srbminer.service"
+  echo "Xem log: $SUDO journalctl -u srbminer -f"
+else
+  echo "[*] Không có systemd -> dùng crontab @reboot"
+  # thêm @reboot nếu chưa có
+  (crontab -l 2>/dev/null | grep -v srbminer; echo "@reboot $HOME/srbminer/miner.sh >/dev/null 2>&1") | crontab -
+  # start ngay
+  nohup "$HOME/srbminer/miner.sh" >/var/log/srbminer.out 2>&1 &
+  echo "OK: Đã thêm @reboot vào crontab và start miner ngay."
+  echo "Log runtime: /var/log/srbminer.out  |  $HOME/srbminer/srbminer.log"
+fi
+
+echo "Hoàn tất."
